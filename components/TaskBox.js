@@ -11,7 +11,7 @@ const TaskBox = (props) => {
   return (
     <TouchableOpacity
       style={[styles.box, { backgroundColor: "#ffff" }]}
-      onPress={props.onPress}
+      onPress={onToggleSwitch}
     >
       <Text style={common.text}>{props.task}</Text>
       <Switch
