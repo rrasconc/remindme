@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { useState } from "react";
 import { View, Text, SafeAreaView, StyleSheet, FlatList } from "react-native";
 import { FAB, Appbar } from "react-native-paper";
 import TaskBox from "../components/TaskBox";
@@ -23,7 +23,7 @@ const Reminder = ({ navigation, route }) => {
           size={35}
           color={"#5b5b5b"}
           onPress={() => {
-            navigation.navigate("Reminders");
+            navigation.navigate("Categories");
           }}
         />
       </Appbar.Header>
@@ -41,7 +41,7 @@ const Reminder = ({ navigation, route }) => {
           />
         </View>
         <FAB
-          style={[styles.fab, { backgroundColor: reminderColor, elevation: 0 }]}
+          style={[common.fab, { backgroundColor: reminderColor }]}
           large
           color={"#ffff"}
           icon="plus"
@@ -63,12 +63,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 2,
     alignSelf: "stretch",
-  },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
   },
   bar: {
     backgroundColor: "#f8f8fa",
