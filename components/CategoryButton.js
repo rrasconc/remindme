@@ -2,12 +2,16 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
-const ReminderButton = (props) => {
+const CategoryButton = (props) => {
   const common = require("../assets/commonStyles");
 
   return (
     <TouchableOpacity
-      style={[styles.wrapper, { backgroundColor: props.color }]}
+      style={[
+        styles.container,
+        props.shadow ? styles.shadow : null,
+        { backgroundColor: props.color },
+      ]}
       onPress={props.onPress}
     >
       <View style={styles.inner}>
@@ -19,21 +23,15 @@ const ReminderButton = (props) => {
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     padding: 40,
     marginVertical: 15,
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 7,
-    elevation: 7,
   },
   inner: {
-    //backgroundColor: "#8886",
     backgroundColor: "rgba(126,126,126,0.2)",
     borderRadius: 10,
     padding: 20,
@@ -42,6 +40,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
   },
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 7,
+    elevation: 7,
+  },
 });
 
-export default ReminderButton;
+export default CategoryButton;
