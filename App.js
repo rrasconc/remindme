@@ -3,9 +3,10 @@ import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { BottomNavigation } from "react-native-paper";
-import Reminders from "./screens/Reminders";
+import Categories from "./screens/Categories";
 import Reminder from "./screens/Reminder";
 import AddReminder from "./screens/AddReminder";
+import AddCategory from "./screens/AddCategory";
 
 const Stack = createStackNavigator();
 const RemindersScreen = () => {
@@ -13,10 +14,11 @@ const RemindersScreen = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Group>
-          <Stack.Screen name="Reminders" component={Reminders} />
+          <Stack.Screen name="Categories" component={Categories} />
           <Stack.Screen name="Reminder" component={Reminder} />
         </Stack.Group>
         <Stack.Group screenOptions={{ presentation: "modal" }}>
+          <Stack.Screen name="AddCategory" component={AddCategory} />
           <Stack.Screen name="AddReminder" component={AddReminder} />
         </Stack.Group>
       </Stack.Navigator>
