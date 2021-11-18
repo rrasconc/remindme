@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import TextBox from "../components/TextBox";
 import ColorPicker from "../components/ColorPicker";
 import IconPicker from "../components/IconPicker";
 import PrettyButton from "../components/PrettyButton";
 import CategoryButton from "../components/CategoryButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const AddCategory = () => {
+const AddCategory = ({ navigation }) => {
   const common = require("../assets/commonStyles");
   const [name, onChangeName] = useState();
   const [selectedColor, setSelectedColor] = useState("#FFFF");
@@ -41,6 +42,35 @@ const AddCategory = () => {
   const handleIconSelect = (icon) => {
     setSelectedIcon(icon);
   };
+  const handleAdd = useCallback(async () => {
+    try {
+      let data = await AsyncStorage.getItem("@data");
+      if (data === null) {
+        data = [];
+      } else {
+        data = JSON.parse(data);
+      }
+      console.log(data);
+      let category = {
+        name: name,
+        icon: selectedIcon,
+        color: selectedColor,
+        reminders: [],
+      };
+      console.log(category);
+      data.push(category);
+      try {
+        await AsyncStorage.setItem("@data", JSON.stringify(data));
+        console.log("category saved");
+        navigation.navigate("Categories");
+      } catch (error) {
+        console.log(error);
+      }
+      // await AsyncStorage.removeItem("@data");
+    } catch (error) {
+      console.log(error);
+    }
+  }, [selectedColor, selectedIcon, name]);
 
   return (
     <SafeAreaView style={common.screen}>
@@ -78,8 +108,8 @@ const AddCategory = () => {
           <PrettyButton
             text={"ADD"}
             color={"#5B5B5B"}
-            onSelect={() => {
-              console.log("Pressed");
+            onPress={() => {
+              handleAdd();
             }}
           />
         </ScrollView>

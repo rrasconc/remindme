@@ -1,48 +1,83 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useCallback, useState } from "react";
 import {
-  StatusBar,
   Text,
   SafeAreaView,
   View,
-  StyleSheet,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { FAB } from "react-native-paper";
-
 import CategoryButton from "../components/CategoryButton";
-
-const DATA = [{ id: 0, category: "Home", color: "#E78484", icon: "home" }];
 
 export default Categories = ({ navigation }) => {
   const common = require("../assets/commonStyles");
+  const [categories, setCategories] = useState([]);
+  const [isFetchingData, setIsFetchingData] = useState(false);
+
+  const fetchCategories = useCallback(async () => {
+    setIsFetchingData(true);
+    try {
+      let data = await AsyncStorage.getItem("@data");
+      setCategories(JSON.parse(data));
+      setTimeout(() => {
+        setIsFetchingData(false);
+      }, 800);
+      //await AsyncStorage.removeItem("@data");
+    } catch (error) {
+      console.log(error);
+    }
+  }, [isFetchingData, categories]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchCategories();
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <SafeAreaView style={common.screen}>
       <View style={common.container}>
         <Text style={common.title}>CATEGORIES</Text>
-        <FlatList
-          style={[{ alignSelf: "stretch" }]}
-          data={DATA}
-          keyExtractor={(item) => item.category}
-          ListEmptyComponent={
-            <View style={common.center}>
-              <Text style={[common.text, { marginVertical: 100 }]}>
-                Yoy don't have any categories yet
-              </Text>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <CategoryButton
-              category={item.category}
-              color={item.color}
-              icon={item.icon}
-              onPress={() => {
-                navigation.navigate("Reminder", { reminder: item });
-              }}
-              shadow={true}
-            />
-          )}
-        />
+        {isFetchingData ? (
+          <View style={{ flex: 1, justifyContent: "center", marginTop: "50%" }}>
+            <ActivityIndicator size="large" color={common.primary.color} />
+          </View>
+        ) : (
+          <FlatList
+            style={[{ alignSelf: "stretch" }]}
+            data={categories}
+            keyExtractor={(item) => item.name}
+            ListEmptyComponent={
+              <View style={common.center}>
+                <Text style={[common.text, { marginTop: 100 }]}>
+                  Yoy don't have any categories yet
+                </Text>
+                <CategoryButton
+                  category={"Add a category"}
+                  color={"#ffff"}
+                  icon={"plus-circle"}
+                  onPress={() => {
+                    navigation.navigate("AddCategory");
+                  }}
+                  shadow={false}
+                />
+              </View>
+            }
+            renderItem={({ item }) => (
+              <CategoryButton
+                category={item.name}
+                color={item.color}
+                icon={item.icon}
+                onPress={() => {
+                  navigation.navigate("Reminder", { category: item });
+                }}
+                shadow={true}
+              />
+            )}
+          />
+        )}
       </View>
       <FAB
         style={[common.fab, { backgroundColor: "#5b5b5b" }]}

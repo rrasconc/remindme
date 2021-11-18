@@ -1,19 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, SafeAreaView, StyleSheet, FlatList } from "react-native";
 import { FAB, Appbar } from "react-native-paper";
 import TaskBox from "../components/TaskBox";
 
-const DATA = [
-  { id: 0, task: "Fed my dog" },
-  { id: 1, task: "Watered my plants" },
-  { id: 2, task: "Locked my door" },
-  { id: 3, task: "Read a book" },
-];
-
 const Reminder = ({ navigation, route }) => {
   const common = require("../assets/commonStyles");
-  const reminderColor = route.params.reminder.color;
-  const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
+  const reminderColor = route.params.category.color;
 
   return (
     <SafeAreaView style={common.screen}>
@@ -28,13 +20,20 @@ const Reminder = ({ navigation, route }) => {
         />
       </Appbar.Header>
       <View style={[common.container, { flex: 2 }]}>
-        <Text style={common.title}>{route.params.reminder.category}</Text>
+        <Text style={common.title}>{route.params.category.name}</Text>
         <View style={styles.tasks}>
           <Text style={common.text}>I have...</Text>
           <FlatList
             style={{ alignSelf: "stretch" }}
-            data={DATA}
-            keyExtractor={(item) => item.id.toString()}
+            data={route.params.category.reminders}
+            keyExtractor={(item) => item.task}
+            ListEmptyComponent={
+              <View style={common.center}>
+                <Text style={common.text}>
+                  Wait... You don't have any reminders yet!
+                </Text>
+              </View>
+            }
             renderItem={({ item }) => (
               <TaskBox color={reminderColor} task={item.task}></TaskBox>
             )}
@@ -46,7 +45,9 @@ const Reminder = ({ navigation, route }) => {
           color={"#ffff"}
           icon="plus"
           onPress={() => {
-            navigation.navigate("AddReminder", { reminderColor });
+            navigation.navigate("AddReminder", {
+              category: route.params.category,
+            });
           }}
         />
       </View>
